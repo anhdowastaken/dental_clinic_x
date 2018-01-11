@@ -1,1 +1,4 @@
-This is index page of Dental Clinic X
+{% if user.is_authenticated %}
+<p>[{{ user.dentalclinicuser.get_role_display }}] {{ user.username }}</p>
+{% endif %}
+<p>This is index page of Dental Clinic X</p>
