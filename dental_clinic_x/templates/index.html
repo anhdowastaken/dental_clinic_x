@@ -1,3 +1,12 @@
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 {% if user.is_authenticated %}
 <p>[{{ user.dentalclinicuser.get_role_display }}] {{ user.username }}</p>
 {% endif %}
@@ -6,4 +15,67 @@
 <a href="{% url 'dental_clinic_x:logout'%}">Logout</a>
 {% else %}
 <a href="{% url 'dental_clinic_x:login'%}">Login</a>
+{% endif %}
+
+{% if user.is_authenticated %}
+  {% if user.dentalclinicuser.is_admin %}
+    <div>
+      <button type="button" id="create_new_dental_record" class="btn btn-default" data-toggle="modal" data-target="#new_dental_record_modal">New Dental Record</button>
+
+      <div id="new_dental_record_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">New Dental Record</h4>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'dental_clinic_x:create_new_dental_record' %}" method="POST">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                  {{ form.first_name.errors }}
+                  <label for="{{ form.first_name.id_for_label }}">First name:</label>
+                  <input type="text" class="form-control" id="id_first_name" name="first_name">
+                </div>
+                <div class="form-group">
+                  {{ form.last_name.errors }}
+                  <label for="{{ form.last_name.id_for_label }}">Last name:</label>
+                  <input type="text" class="form-control" id="id_last_name" name="last_name">
+                </div>
+                <label>Medical history</label>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="medical_history_operations"> Operations</label>
+                </div>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="medical_history_nursing"> Nursing</label>
+                </div>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="medical_history_pregnant"> Pregnant</label>
+                </div>
+                <label>Dental history</label>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="dental_history_bad_breath"> Bad breath</label>
+                </div>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="dental_history_sensitive_teeth"> Sensitive teeth</label>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% if user.dentalclinicuser.is_dentis %}
+{% endif %}
+
+{% if user.dentalclinicuser.is_patient %}
+{% endif %}
+
 {% endif %}

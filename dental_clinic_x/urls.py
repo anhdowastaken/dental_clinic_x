@@ -8,5 +8,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     # Add Django site authentication urls (for login, logout, password management)
     path('accounts/', include('django.contrib.auth.urls')),
+    path('create_new_dental_record', views.create_new_dental_record, name="create_new_dental_record"),
 ]
 

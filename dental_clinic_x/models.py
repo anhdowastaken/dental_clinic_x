@@ -13,6 +13,7 @@ class DentalClinicUser(models.Model):
         ('a', 'Admin'),
         ('d', 'Dentist'),
         ('p', 'Patient'),
+        ('u', 'Unknown'),
     )
 
     user = models.OneToOneField(
@@ -23,7 +24,7 @@ class DentalClinicUser(models.Model):
         max_length = 1,
         choices = ROLE,
         null = False,
-        default = 'p',
+        default = 'u',
     )
     bod = models.DateField(
         null = True,
@@ -51,6 +52,24 @@ class DentalClinicUser(models.Model):
     def __str__(self):
         return self.user.__str__()
 
+    def is_admin(self):
+        if self.role == 'a':
+            return True
+        else:
+            return False
+
+    def is_dentist(self):
+        if self.role == 'd':
+            return True
+        else:
+            return False
+
+    def is_patient(self):
+        if self.role == 'p':
+            return True
+        else:
+            return False
+
 @receiver(post_save, sender = User)
 def create_dental_clinic_user(sender, instance, created, **kwargs):
     if created:
@@ -59,15 +78,6 @@ def create_dental_clinic_user(sender, instance, created, **kwargs):
 @receiver(post_save, sender = User)
 def save_dental_clinic_user(sender, instance, **kwargs):
     instance.dentalclinicuser.save()
-
-class MedicalHistory(models.Model):
-    operations = models.BooleanField(default = False)
-    nursing = models.BooleanField(default = False)
-    pregnant = models.BooleanField(default = False)
-
-class DentalHistory(models.Model):
-    bad_breath = models.BooleanField(default = False)
-    sensitive_teeth = models.BooleanField(default = False)
 
 class DentalService(models.Model):
     name = models.CharField(
@@ -104,14 +114,13 @@ class DentalRecord(models.Model):
         DentalClinicUser,
         related_name = 'dentists',
     )
-    medical_history = models.OneToOneField(
-        MedicalHistory,
-        on_delete = models.CASCADE,
-    )
-    dental_history = models.OneToOneField(
-        DentalHistory,
-        on_delete = models.CASCADE,
-    )
+
+    medical_history_operations = models.BooleanField(default = False)
+    medical_history_nursing = models.BooleanField(default = False)
+    medical_history_pregnant = models.BooleanField(default = False)
+
+    dental_history_bad_breath = models.BooleanField(default = False)
+    dental_history_sensitive_teeth = models.BooleanField(default = False)
 
     def __str__(self):
         return '{} {}'.format(self.patient, self.dentists)
