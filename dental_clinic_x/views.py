@@ -15,7 +15,7 @@ def admin_check(user):
     else:
         return False
 
-def dentis_check(user):
+def dentist_check(user):
     if user.is_authenticated:
         return user.dentalclinicuser.is_dentist()
     else:
@@ -40,6 +40,7 @@ def index(request):
         }
         template = loader.get_template('index_admin.html')
         return HttpResponse(template.render(context, request))
+
     elif user.dentalclinicuser.is_dentist():
         # Get all dental records which current dentist is in charge of
         dental_records = DentalRecord.objects.filter(dentists__id__exact = user.dentalclinicuser.id)
@@ -48,6 +49,7 @@ def index(request):
         }
         template = loader.get_template('index_dentist.html')
         return HttpResponse(template.render(context, request))
+
     elif user.dentalclinicuser.is_patient():
         # Get all dental records of current patient
         dental_records = DentalRecord.objects.filter(patient__id__exact = user.dentalclinicuser.id)
@@ -56,6 +58,7 @@ def index(request):
         }
         template = loader.get_template('index_patient.html')
         return HttpResponse(template.render(context, request))
+
     else:
         template = loader.get_template('index.html')
         context = {}
@@ -102,3 +105,57 @@ def create_new_dental_record(request):
         return redirect('dental_clinic_x:index')
     else:
         return redirect('dental_clinic_x:index')
+
+@login_required
+def view_dental_record(request, record_id):
+    if record_id is None:
+        return redirect('dental_clinic_x:index')
+    else:
+        user = request.user
+
+        if user.dentalclinicuser.is_admin():
+            print("admin")
+            dental_record = DentalRecord.objects.get(id__exact = record_id)
+
+            context = {
+                'has_permission': True,
+                'dental_record': dental_record,
+            }
+            template = loader.get_template('view_dental_record.html')
+            return HttpResponse(template.render(context, request))
+
+        elif user.dentalclinicuser.is_dentist():
+            print("dentist")
+            dental_record = DentalRecord.objects.get(id__exact = record_id)
+
+            if user.dentalclinicuser in dental_record.dentists.all():
+                has_permission = True
+            else:
+                has_permission = False
+
+            context = {
+                'has_permission': has_permission,
+                'dental_record': dental_record,
+            }
+            template = loader.get_template('view_dental_record.html')
+            return HttpResponse(template.render(context, request))
+
+        elif user.dentalclinicuser.is_patient():
+            print("patient")
+            dental_record = DentalRecord.objects.get(id__exact = record_id)
+
+            if user.dentalclinicuser == dental_record.patient:
+                has_permission = True
+            else:
+                has_permission = False
+
+            context = {
+                'has_permission': has_permission,
+                'dental_record': dental_record,
+            }
+            template = loader.get_template('view_dental_record.html')
+            return HttpResponse(template.render(context, request))
+
+        else:
+            return redirect('dental_clinic_x:index')
+

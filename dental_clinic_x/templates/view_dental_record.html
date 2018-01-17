@@ -1,0 +1,20 @@
+{% if has_permission %}
+{% if dental_record %}
+<div>
+  <ul>
+    <li>Created: {{ dental_record.created_time }}</li>
+    <li>Updated: {{ dental_record.updated_time }}</li>
+    <li>Patient: {{ dental_record.patient.user.get_full_name }}</li>
+    <li>Dentists:
+      <ul>
+      {% for dentist in dental_record.dentists.all %}
+        <li>{{ dentist.user.get_full_name }}</li>
+      {% endfor %}
+      </ul>
+    </li>
+  </ul>
+</div>
+{% endif %}
+{% else %}
+<p>You don't have permission to view this dental record</p>
+{% endif %}
