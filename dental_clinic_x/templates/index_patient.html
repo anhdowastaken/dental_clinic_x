@@ -7,13 +7,17 @@
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-{% if user.is_authenticated %}
 <p>[{{ user.dentalclinicuser.get_role_display }}] {{ user.username }}</p>
-{% endif %}
-<p>This is index page of Dental Clinic X</p>
-{% if user.is_authenticated %}
+<p>This is index page for patient of Dental Clinic X</p>
 <a href="{% url 'dental_clinic_x:logout'%}">Logout</a>
-{% else %}
-<a href="{% url 'dental_clinic_x:login'%}">Login</a>
+
+{% if dental_records %}
+<div>
+  <ul>
+  {% for dental_record in dental_records %}
+  <li>{{ dental_record.patient.user.get_full_name }} @{{ dental_record.patient.created_time }}</li>
+  {% endfor %}
+  </ul>
+</div>
 {% endif %}
 
