@@ -113,7 +113,6 @@ class DentalRecord(models.Model):
     dentists = models.ManyToManyField(
         DentalClinicUser,
         related_name = 'dentists',
-        null = True,
     )
 
     medical_history_operations = models.BooleanField(default = False)

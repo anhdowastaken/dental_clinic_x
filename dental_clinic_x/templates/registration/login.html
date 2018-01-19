@@ -1,33 +1,94 @@
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-<form method="post" action="{% url 'dental_clinic_x:login' %}">
-{% csrf_token %}
+  <title>DENTAL CLINIC X</title>
 
-<div>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
-</div>
-<div>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
-</div>
+  {% load static %}
+  <!-- Bootstrap Core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
-<div>
-  <input type="submit" value="login" />
-  <input type="hidden" name="next" value="{{ next }}" />
-</div>
-</form>
+  <!-- MetisMenu CSS -->
+  <link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
 
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'dental_clinic_x:password_reset' %}">Lost password?</a></p>
+  <!-- Custom CSS -->
+  <link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="login-panel panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Please Sign In</h3>
+          </div>
+          <div class="panel-body">
+            <form role="form" method="POST" action="{% url 'dental_clinic_x:login' %}">
+              {% csrf_token %}
+              {{ form.non_field_errors }}
+              <fieldset>
+                {% if form.errors %}
+                <div class="form-group">
+                  <div class="alert alert-danger">
+                    Your username and password didn't match. Please try again.
+                  </div>
+                </div>
+                {% endif %}
+                <div class="form-group">
+                  <input class="form-control" placeholder="Username" name="username" type="username" autofocus>
+                </div>
+                <div class="form-group">
+                  <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                </div>
+                <!-- Change this to a button or input when using this as a form -->
+                <a id="btn-login" href="#" class="btn btn-lg btn-success btn-block">Login</a>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+
+  <!-- Metis Menu Plugin JavaScript -->
+  <script src="{% static 'vendor/metisMenu/metisMenu.min.js' %}"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="{% static 'dist/js/sb-admin-2.js' %}"></script>
+
+  <script>
+    $(document).ready(function() {
+      $("a#btn-login").click(function(e) {
+        e.preventDefault();
+        $("form").trigger("submit");
+        return false;
+      });
+    });
+  </script>
+</body>
+
+</html>
+
