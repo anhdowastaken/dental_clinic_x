@@ -80,12 +80,25 @@ def save_dental_clinic_user(sender, instance, **kwargs):
     instance.dentalclinicuser.save()
 
 class DentalService(models.Model):
+    CURRENCY = (
+        ('USD', 'US Dollar'),
+        ('VND', 'Vietnam Dong'),
+    )
+
     name = models.CharField(
         max_length = 30,
         null = True,
         blank = True,
     )
-    price = models.BigIntegerField(
+    price = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+        null = True,
+        blank = True,
+    )
+    currency = models.CharField(
+        max_length = 3,
+        choices = CURRENCY,
         null = True,
         blank = True,
     )

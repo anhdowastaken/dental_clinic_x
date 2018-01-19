@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
+from .models import DentalClinicUser
 from .models import DentalRecord
+from .models import DentalService
 from .forms import DentalRecordForm
 
 def admin_check(user):
@@ -84,7 +86,7 @@ def create_new_dental_record(request):
             user.is_superuser = False
             user.save()
             # Set new username by using its new ID
-            user.username = "patient" + str(user.id)
+            user.username = "BN" + str(user.id)
             user.first_name = dental_record_form.cleaned_data['first_name']
             user.last_name = dental_record_form.cleaned_data['last_name']
             user.save()
@@ -161,7 +163,14 @@ def view_dental_record(request, record_id):
 
 @login_required
 def view_dentist_list(request):
-    pass
+    user = request.user
+    # Get all dentists of the dental clinic
+    dentists = DentalClinicUser.objects.filter(role__exact = 'd')
+    context = {
+        'dentists': dentists,
+    }
+    template = loader.get_template('view_dentist_list.html')
+    return HttpResponse(template.render(context, request))
 
 @login_required
 def view_dentist(request, dentist_id):
@@ -169,7 +178,14 @@ def view_dentist(request, dentist_id):
 
 @login_required
 def view_dental_service_list(request):
-    pass
+    user = request.user
+    # Get all dental services of the dental clinic
+    dental_services = DentalService.objects.all()
+    context = {
+        'dental_services': dental_services,
+    }
+    template = loader.get_template('view_dental_service_list.html')
+    return HttpResponse(template.render(context, request))
 
 @login_required
 def view_dental_service(request, service_id):
