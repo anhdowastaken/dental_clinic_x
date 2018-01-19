@@ -1,3 +1,7 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
 {% if has_permission %}
 {% if dental_record %}
 <div>
@@ -18,3 +22,6 @@
 {% else %}
 <p>You don't have permission to view this dental record</p>
 {% endif %}
+
+{% endblock %}
+

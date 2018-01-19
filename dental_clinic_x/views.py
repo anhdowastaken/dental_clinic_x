@@ -159,3 +159,19 @@ def view_dental_record(request, record_id):
         else:
             return redirect('dental_clinic_x:index')
 
+@login_required
+def view_dentist_list(request):
+    pass
+
+@login_required
+def view_dentist(request, dentist_id):
+    pass
+
+@login_required
+def view_dental_service_list(request):
+    pass
+
+@login_required
+def view_dental_service(request, service_id):
+    pass
+

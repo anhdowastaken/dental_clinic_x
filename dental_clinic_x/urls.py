@@ -10,5 +10,9 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('create_new_dental_record/', views.create_new_dental_record, name="create_new_dental_record"),
     path('view_dental_record/<int:record_id>/', views.view_dental_record, name="view_dental_record"),
+    path('view_dentist_list/', views.view_dentist_list, name="view_dentist_list"),
+    path('view_dentist/<int:dentist_id>/', views.view_dentist, name="view_dentist"),
+    path('view_dental_service_list/', views.view_dental_service_list, name="view_dental_service_list"),
+    path('view_dental_service/<int:service_id>/', views.view_dental_service, name="view_dental_service"),
 ]
 
