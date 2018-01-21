@@ -266,3 +266,14 @@ def create_new_dental_service(request):
 
     return redirect('dental_clinic_x:view_dental_service_list')
 
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def delete_dental_service(request):
+    if request.method == 'POST':
+        service_id = request.POST.get("service_id")
+        if service_id is not None:
+            dental_service = DentalService.objects.filter(id__exact = service_id)
+            if dental_service is not None:
+                dental_service.delete()
+    return redirect('dental_clinic_x:view_dental_service_list')
+

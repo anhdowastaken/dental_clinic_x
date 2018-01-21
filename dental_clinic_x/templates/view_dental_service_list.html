@@ -25,7 +25,16 @@
                         <tr class="dental_service">
                             <input type="hidden" value="{{ dental_service.id }}"/>
                             <td>{{ dental_service.name }}</td>
-                            <td>{{ dental_service.price }} {{ dental_service.get_currency_display }}</td>
+                            <td>
+                              {{ dental_service.price }} {{ dental_service.get_currency_display }}
+                              {% if user.dentalclinicuser.is_admin %}
+                              <form action="{% url 'dental_clinic_x:delete_dental_service' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="service_id" value="{{ dental_service.id }}"/>
+                                <button type="button" class="btn btn-danger delete_dental_service" style="float: right;">Delete</button>
+                              </form>
+                              {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                         {% endif %}
@@ -52,6 +61,16 @@
 
       var service_id = $(this).children("input[type='hidden']").val();
       window.location.replace("{% url 'dental_clinic_x:view_dental_service' service_id='12345' %}".replace("12345", service_id));
+
+      return false;
+    });
+
+    $("button.delete_dental_service").click(function(e) {
+      e.preventDefault();
+
+      if (confirm("Are you sure?") == true) {
+        $(this).parent().trigger("submit");
+      }
 
       return false;
     });

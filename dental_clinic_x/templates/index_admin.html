@@ -29,7 +29,7 @@
                             <td>{{ dental_record.patient.user.username}}</td>
                             <td>{{ dental_record.patient.user.first_name }}</td>
                             <td>{{ dental_record.patient.user.last_name }}</td>
-                            <td>{{ dental_record.patient.created_time }}</td>
+                            <td>{{ dental_record.patient.created_time }}<button type="button" class="btn btn-danger delete_dental_record" style="float: right;">Delete</button></td>
                         </tr>
                         {% endfor %}
                         {% endif %}
@@ -56,6 +56,14 @@
 
       var record_id = $(this).children("input[type='hidden']").val();
       window.location.replace("{% url 'dental_clinic_x:view_dental_record' record_id='12345' %}".replace("12345", record_id));
+
+      return false;
+    });
+
+    $("button.delete_dental_record").click(function(e) {
+      e.preventDefault();
+
+      confirm("Are you sure?");
 
       return false;
     });
