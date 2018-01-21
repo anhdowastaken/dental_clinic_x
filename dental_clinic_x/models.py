@@ -87,18 +87,21 @@ class DentalService(models.Model):
 
     name = models.CharField(
         max_length = 30,
+        unique = True,
         null = True,
         blank = True,
     )
     price = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
+        default = 0,
         null = True,
         blank = True,
     )
     currency = models.CharField(
         max_length = 3,
         choices = CURRENCY,
+        default = 'USD',
         null = True,
         blank = True,
     )
@@ -157,5 +160,14 @@ class Examination(models.Model):
         DentalClinicUser,
         on_delete = models.CASCADE,
     )
-    dental_services = models.ManyToManyField(DentalService)
+    dental_services = models.ManyToManyField(DentalService, through='DentalServiceQuantity')
+
+class DentalServiceQuantity(models.Model):
+    examination = models.ForeignKey(Examination, on_delete=models.CASCADE)
+    dental_service = models.ForeignKey(DentalService, on_delete=models.CASCADE)
+    quantity = models.IntegerField(
+        default = 0,
+        null = True,
+        blank = True,
+    )
 
