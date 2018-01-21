@@ -64,7 +64,7 @@ try:
     # Dental service
     dental_service = DentalService()
     dental_service.name = 'Computer Tomography (3D scan)'
-    dental_service.currency = 'usd'
+    dental_service.currency = 'USD'
     dental_service.price = 100
     dental_service.save()
 except:
@@ -74,7 +74,7 @@ try:
     # Dental service
     dental_service = DentalService()
     dental_service.name = 'Digital panoramic X-ray'
-    dental_service.currency = 'usd'
+    dental_service.currency = 'USD'
     dental_service.price = 20
     dental_service.save()
 except:
@@ -84,7 +84,7 @@ try:
     # Dental service
     dental_service = DentalService()
     dental_service.name = 'Digital dental X-ray'
-    dental_service.currency = 'usd'
+    dental_service.currency = 'USD'
     dental_service.price = 10
     dental_service.save()
 except:

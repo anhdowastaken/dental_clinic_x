@@ -25,7 +25,7 @@
                         <tr class="dental_service">
                             <input type="hidden" value="{{ dental_service.id }}"/>
                             <td>{{ dental_service.name }}</td>
-                            <td>{{ dental_service.price }} {{ dental_service.currency }}</td>
+                            <td>{{ dental_service.price }} {{ dental_service.get_currency_display }}</td>
                         </tr>
                         {% endfor %}
                         {% endif %}

@@ -6,10 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
+
 from .models import DentalClinicUser
 from .models import DentalRecord
 from .models import DentalService
+
 from .forms import DentalRecordForm
+from .forms import DentistProfileForm
+from .forms import DentalServiceForm
 
 def admin_check(user):
     if user.is_authenticated:
@@ -35,10 +39,8 @@ def index(request):
     if user.dentalclinicuser.is_admin():
         # Get all dental records of the dental clinic
         dental_records = DentalRecord.objects.all()
-        form = DentalRecordForm()
         context = {
             'dental_records': dental_records,
-            'form': form,
         }
         template = loader.get_template('index_admin.html')
         return HttpResponse(template.render(context, request))
@@ -65,6 +67,17 @@ def index(request):
         template = loader.get_template('index.html')
         context = {}
         return HttpResponse(template.render(context, request))
+
+@login_required
+def view_dental_record_list(request):
+    return redirect('dental_clinic_x:index')
+
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def new_dental_record(request):
+    template = loader.get_template('new_dental_record.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
 
 @login_required
 @user_passes_test(admin_check, 'dental_clinic_x:index')
@@ -190,4 +203,66 @@ def view_dental_service_list(request):
 @login_required
 def view_dental_service(request, service_id):
     pass
+
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def new_dentist_profile(request):
+    template = loader.get_template('new_dentist_profile.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def create_new_dentist_profile(request):
+    if request.method == 'POST':
+        dentist_profile_form = DentistProfileForm(request.POST)
+        if dentist_profile_form.is_valid():
+            try:
+                # Find dummy user
+                user = User.objects.get(username = "dummy_username")
+                # If a dummy user exists, it should not be there
+                user.delete()
+            except ObjectDoesNotExist:
+                pass
+
+            # Create a dummy user with default password
+            user = User.objects.create_user(username = "dummy_username", password = "dcx12345")
+            user.is_staff = False
+            user.is_superuser = False
+            user.save()
+            # Set new username by using its new ID
+            user.username = "NS" + str(user.id)
+            user.first_name = dentist_profile_form.cleaned_data['first_name']
+            user.last_name = dentist_profile_form.cleaned_data['last_name']
+            user.save()
+
+            # User created by admin should be a dentist
+            user.dentalclinicuser.role = 'd'
+            user.dentalclinicuser.save()
+
+    return redirect('dental_clinic_x:view_dentist_list')
+
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def new_dental_service(request):
+    template = loader.get_template('new_dental_service.html')
+    form = DentalServiceForm()
+    context = {
+        'form': form
+    }
+    return HttpResponse(template.render(context, request))
+
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def create_new_dental_service(request):
+    if request.method == 'POST':
+        dental_service_form = DentalServiceForm(request.POST)
+        if dental_service_form.is_valid():
+            dental_service = DentalService()
+            dental_service.name = dental_service_form.cleaned_data['name']
+            dental_service.price = dental_service_form.cleaned_data['price']
+            dental_service.currency = dental_service_form.cleaned_data['currency']
+            dental_service.save()
+
+    return redirect('dental_clinic_x:view_dental_service_list')
 

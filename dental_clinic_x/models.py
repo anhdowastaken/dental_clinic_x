@@ -79,12 +79,12 @@ def create_dental_clinic_user(sender, instance, created, **kwargs):
 def save_dental_clinic_user(sender, instance, **kwargs):
     instance.dentalclinicuser.save()
 
-class DentalService(models.Model):
-    CURRENCY = (
-        ('USD', 'US Dollar'),
-        ('VND', 'Vietnam Dong'),
-    )
+CURRENCY = (
+    ('USD', 'US Dollar'),
+    ('VND', 'Vietnam Dong'),
+)
 
+class DentalService(models.Model):
     name = models.CharField(
         max_length = 30,
         unique = True,
