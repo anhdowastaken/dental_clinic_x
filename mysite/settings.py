@@ -121,5 +121,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = 'dental_clinic_x/static/'
 
+LOGIN_URL = '/dental_clinic_x/accounts/login/'
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/dental_clinic_x/'
