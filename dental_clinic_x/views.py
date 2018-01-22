@@ -277,3 +277,25 @@ def delete_dental_service(request):
                 dental_service.delete()
     return redirect('dental_clinic_x:view_dental_service_list')
 
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def delete_dentist_profile(request):
+    if request.method == 'POST':
+        dentist_id = request.POST.get("dentist_id")
+        if dentist_id is not None:
+            user = User.objects.filter(dentalclinicuser__id__exact = dentist_id)
+            if user is not None:
+                user.delete()
+    return redirect('dental_clinic_x:view_dentist_list')
+
+@login_required
+@user_passes_test(admin_check, 'dental_clinic_x:index')
+def delete_dental_record(request):
+    if request.method == 'POST':
+        patient_id = request.POST.get("patient_id")
+        if patient_id is not None:
+            user = User.objects.filter(dentalclinicuser__id__exact = patient_id)
+            if user is not None:
+                user.delete()
+    return redirect('dental_clinic_x:view_dental_record_list')
+

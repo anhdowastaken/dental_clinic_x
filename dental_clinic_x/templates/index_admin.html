@@ -29,7 +29,14 @@
                             <td>{{ dental_record.patient.user.username}}</td>
                             <td>{{ dental_record.patient.user.first_name }}</td>
                             <td>{{ dental_record.patient.user.last_name }}</td>
-                            <td>{{ dental_record.patient.created_time }}<button type="button" class="btn btn-danger delete_dental_record" style="float: right;">Delete</button></td>
+                            <td>
+                              {{ dental_record.patient.created_time }}
+                              <form action="{% url 'dental_clinic_x:delete_dental_record' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="patient_id" value="{{ dental_record.patient.id }}"/>
+                                <button type="button" class="btn btn-danger delete_dental_record" style="float: right;">Delete</button>
+                              </form>
+                            </td>
                         </tr>
                         {% endfor %}
                         {% endif %}
@@ -63,7 +70,9 @@
     $("button.delete_dental_record").click(function(e) {
       e.preventDefault();
 
-      confirm("Are you sure?");
+      if (confirm("Are you sure?") == true) {
+        $(this).parent().trigger("submit");
+      }
 
       return false;
     });

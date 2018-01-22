@@ -33,7 +33,16 @@
                             {% endif %}
                             <td>{{ dentist.user.first_name }}</td>
                             <td>{{ dentist.user.last_name }}</td>
-                            <td>{{ dentist.created_time }}</td>
+                            <td>
+                              {{ dentist.created_time }}
+                              {% if user.dentalclinicuser.is_admin %}
+                              <form action="{% url 'dental_clinic_x:delete_dentist_profile' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="dentist_id" value="{{ dentist.id }}"/>
+                                <button type="button" class="btn btn-danger delete_dentist_profile" style="float: right;">Delete</button>
+                              </form>
+                              {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                         {% endif %}
@@ -60,6 +69,16 @@
 
       var dentist_id = $(this).children("input[type='hidden']").val();
       window.location.replace("{% url 'dental_clinic_x:view_dentist' dentist_id='12345' %}".replace("12345", dentist_id));
+
+      return false;
+    });
+
+    $("button.delete_dentist_profile").click(function(e) {
+      e.preventDefault();
+
+      if (confirm("Are you sure?") == true) {
+        $(this).parent().trigger("submit");
+      }
 
       return false;
     });
