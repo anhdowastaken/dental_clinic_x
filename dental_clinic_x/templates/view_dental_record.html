@@ -4,23 +4,62 @@
 
 {% if has_permission %}
 {% if dental_record %}
-<div>
-  <ul>
-    <li>Created: {{ dental_record.created_time }}</li>
-    <li>Updated: {{ dental_record.updated_time }}</li>
-    <li>Patient: {{ dental_record.patient.user.get_full_name }}</li>
-    <li>Dentists:
-      <ul>
-      {% for dentist in dental_record.dentists.all %}
-        <li>{{ dentist.user.get_full_name }}</li>
-      {% endfor %}
-      </ul>
-    </li>
-  </ul>
+<div class="row">
+  <div class="col-lg-12">
+    <button type="button" class="btn btn-default edit_dental_record">Edit</button>
+    <button type="button" class="btn btn-default new_examination">New examination</button>
+  </div>
+  <!-- /.col-lg-12 -->
 </div>
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">{{ user.get_full_name }}</h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+  <div class="col-lg-12">
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Created:</strong> {{ dental_record.created_time }}</li>
+      <li class="list-group-item"><strong>Updated:</strong> {{ dental_record.updated_time }}</li>
+      <li class="list-group-item"><strong>Dentists:</strong>
+        <ul>
+        {% for dentist in dental_record.dentists.all %}
+          <li>{{ dentist.user.get_full_name }}</li>
+        {% endfor %}
+        </ul>
+      </li>
+      <li class="list-group-item"><strong>Examinations:</strong>
+        <ul>
+        {% for examination in dental_record.examination_set.all %}
+        <li>{{ examination.dentist.user.get_full_name }} said {{ examination.note }} at {{ examination.created_time }}</li>
+        {% endfor %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+
+<script>
+  $(document).ready(function() {
+    $("button.new_examination").click(function(e) {
+      e.preventDefault();
+
+      window.location.replace("{% url 'dental_clinic_x:new_examination' record_id=dental_record.id %}");
+
+      return false;
+    });
+  });
+</script>
 {% endif %}
 {% else %}
-<p>You don't have permission to view this dental record</p>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="alert alert-danger">You don't have permission to view this dental record</div>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
 {% endif %}
 
 {% endblock %}

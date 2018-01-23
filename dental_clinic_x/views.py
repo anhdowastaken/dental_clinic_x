@@ -10,10 +10,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import DentalClinicUser
 from .models import DentalRecord
 from .models import DentalService
+from .models import Examination
 
 from .forms import DentalRecordForm
 from .forms import DentistProfileForm
 from .forms import DentalServiceForm
+from .forms import ExaminationForm
 
 def admin_check(user):
     if user.is_authenticated:
@@ -30,6 +32,13 @@ def dentist_check(user):
 def patient_check(user):
     if user.is_authenticated:
         return user.dentalclinicuser.is_patient()
+    else:
+        return False
+
+def admin_and_dentist_check(user):
+    if user.is_authenticated:
+        if user.dentalclinicuser.is_admin() or user.dentalclinicuser.is_dentist():
+            return True
     else:
         return False
 
@@ -76,7 +85,10 @@ def view_dental_record_list(request):
 @user_passes_test(admin_check, 'dental_clinic_x:index')
 def new_dental_record(request):
     template = loader.get_template('new_dental_record.html')
-    context = {}
+    form = DentalRecordForm()
+    context = {
+        'form': form,
+    }
     return HttpResponse(template.render(context, request))
 
 @login_required
@@ -117,6 +129,13 @@ def create_new_dental_record(request):
             dental_record.dental_history_sensitive_teeth = dental_record_form.cleaned_data['dental_history_sensitive_teeth']
             dental_record.save()
 
+            # Get dentists assigned to
+            dentist_ids = request.POST.getlist('dentists')
+            dentists = DentalClinicUser.objects.filter(id__in = dentist_ids)
+            for dentist in dentists:
+                dental_record.dentists.add(dentist)
+            dental_record.save()
+
         return redirect('dental_clinic_x:index')
     else:
         return redirect('dental_clinic_x:index')
@@ -129,7 +148,6 @@ def view_dental_record(request, record_id):
         user = request.user
 
         if user.dentalclinicuser.is_admin():
-            print("admin")
             dental_record = DentalRecord.objects.get(id__exact = record_id)
 
             context = {
@@ -140,7 +158,6 @@ def view_dental_record(request, record_id):
             return HttpResponse(template.render(context, request))
 
         elif user.dentalclinicuser.is_dentist():
-            print("dentist")
             dental_record = DentalRecord.objects.get(id__exact = record_id)
 
             if user.dentalclinicuser in dental_record.dentists.all():
@@ -156,7 +173,6 @@ def view_dental_record(request, record_id):
             return HttpResponse(template.render(context, request))
 
         elif user.dentalclinicuser.is_patient():
-            print("patient")
             dental_record = DentalRecord.objects.get(id__exact = record_id)
 
             if user.dentalclinicuser == dental_record.patient:
@@ -298,4 +314,30 @@ def delete_dental_record(request):
             if user is not None:
                 user.delete()
     return redirect('dental_clinic_x:view_dental_record_list')
+
+@login_required
+@user_passes_test(admin_and_dentist_check, 'dental_clinic_x:index')
+def new_examination(request, record_id):
+    dental_record = DentalRecord.objects.get(id = record_id)
+    form = ExaminationForm(dental_record_id = record_id)
+    context = {
+        'dental_record': dental_record,
+        'form': form,
+    }
+    template = loader.get_template('new_examination.html')
+    return HttpResponse(template.render(context, request))
+
+@login_required
+@user_passes_test(admin_and_dentist_check, 'dental_clinic_x:index')
+def create_new_examination(request, record_id):
+    if request.method == 'POST':
+        examination_form = ExaminationForm(request.POST, dental_record_id = record_id)
+        if examination_form.is_valid():
+            examination = Examination()
+            examination.dental_record = DentalRecord.objects.get(id = record_id)
+            examination.dentist = examination_form.cleaned_data['dentist']
+            examination.note = examination_form.cleaned_data['note']
+            examination.save()
+
+    return redirect('dental_clinic_x:view_dental_record', record_id = record_id)
 

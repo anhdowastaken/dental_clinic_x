@@ -50,7 +50,7 @@ class DentalClinicUser(models.Model):
     updated_time = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
-        return self.user.__str__()
+        return self.user.get_full_name()
 
     def is_admin(self):
         if self.role == 'a':
@@ -124,11 +124,11 @@ class DentalRecord(models.Model):
     patient = models.OneToOneField(
         DentalClinicUser,
         on_delete = models.CASCADE,
-        related_name = 'patient',
+        related_name = 'patient_dentalrecord',
     )
     dentists = models.ManyToManyField(
         DentalClinicUser,
-        related_name = 'dentists',
+        related_name = 'dentists_dentalrecord',
     )
 
     medical_history_operations = models.BooleanField(default = False)

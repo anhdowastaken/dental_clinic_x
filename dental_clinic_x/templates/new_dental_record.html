@@ -40,6 +40,15 @@
         <div class="checkbox">
           <label><input type="checkbox" name="dental_history_sensitive_teeth"> Sensitive teeth</label>
         </div>
+        <div class="form-group">
+          {{ form.dentists.errors }}
+          <label for="{{ form.dentists.id_for_label }}">Dentists:</label>
+          <select class="form-control" id="id_dentists" name="dentists" multiple>
+            {% for x, y in form.fields.dentists.choices %}
+            <option value="{{ x }}">{{ y }}</option>
+            {% endfor %} 
+          </select>
+        </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
     </div>
