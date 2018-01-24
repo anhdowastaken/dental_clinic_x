@@ -4,6 +4,7 @@
 
 {% if has_permission %}
 {% if dental_record %}
+{% if user.is_admin %}
 <div class="row">
   <div class="col-lg-12">
     <button type="button" class="btn btn-default edit_dental_record">Edit</button>
@@ -11,6 +12,7 @@
   </div>
   <!-- /.col-lg-12 -->
 </div>
+{% endif %}
 <div class="row">
   <div class="col-lg-12">
     <h1 class="page-header">{{ user.get_full_name }}</h1>

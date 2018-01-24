@@ -45,37 +45,33 @@ def admin_and_dentist_check(user):
 @login_required
 def index(request):
     user = request.user
-    if user.dentalclinicuser.is_admin():
-        # Get all dental records of the dental clinic
-        dental_records = DentalRecord.objects.all()
-        context = {
-            'dental_records': dental_records,
-        }
-        template = loader.get_template('index_admin.html')
-        return HttpResponse(template.render(context, request))
+    try:
+        if user.dentalclinicuser.is_admin():
+            # Get all dental records of the dental clinic
+            dental_records = DentalRecord.objects.all()
+            context = {
+                'dental_records': dental_records,
+            }
+            template = loader.get_template('index_admin.html')
+            return HttpResponse(template.render(context, request))
 
-    elif user.dentalclinicuser.is_dentist():
-        # Get all dental records which current dentist is in charge of
-        dental_records = DentalRecord.objects.filter(dentists__id__exact = user.dentalclinicuser.id)
-        context = {
-            'dental_records': dental_records,
-        }
-        template = loader.get_template('index_dentist.html')
-        return HttpResponse(template.render(context, request))
+        elif user.dentalclinicuser.is_dentist():
+            # Get all dental records which current dentist is in charge of
+            dental_records = DentalRecord.objects.filter(dentists__id__exact = user.dentalclinicuser.id)
+            context = {
+                'dental_records': dental_records,
+            }
+            template = loader.get_template('index_dentist.html')
+            return HttpResponse(template.render(context, request))
 
-    elif user.dentalclinicuser.is_patient():
-        # Get all dental records of current patient
-        dental_records = DentalRecord.objects.filter(patient__id__exact = user.dentalclinicuser.id)
-        context = {
-            'dental_records': dental_records,
-        }
-        template = loader.get_template('index_patient.html')
-        return HttpResponse(template.render(context, request))
+        elif user.dentalclinicuser.is_patient():
+            # Get dental record of current patient
+            dental_record = DentalRecord.objects.get(patient__id__exact = user.dentalclinicuser.id)
+            return redirect('dental_clinic_x:view_dental_record', record_id = dental_record.id)
 
-    else:
-        template = loader.get_template('index.html')
-        context = {}
-        return HttpResponse(template.render(context, request))
+        return redirect('dental_clinic_x:login')
+    except ObjectDoesNotExist:
+        return redirect('dental_clinic_x:login')
 
 @login_required
 def view_dental_record_list(request):
