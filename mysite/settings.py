@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'dental-clinic-x.herokuapp.com',
+    '45.76.189.195'
 ]
 
 
